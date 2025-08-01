@@ -29,7 +29,7 @@ Bu proje, ASP.NET Core MVC kullanılarak geliştirilmiş kapsamlı bir belge yö
 
 1. **Repository'yi klonlayın**
    ```bash
-   git clone https://github.com/kullaniciadi/document-management-system.git
+   git clone https://github.com/esrasultanarli/document-management-system.git
    cd document-management-system
    ```
 
@@ -132,7 +132,7 @@ Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için `LICENSE` dosy
 
 ## 📞 İletişim
 
-- Proje Linki: [https://github.com/kullaniciadi/document-management-system](https://github.com/kullaniciadi/document-management-system)
+- Proje Linki: [https://github.com/esrasultanarli/document-management-system](https://github.com/esrasultanarli/document-management-system)
 
 ## 🙏 Teşekkürler
 
