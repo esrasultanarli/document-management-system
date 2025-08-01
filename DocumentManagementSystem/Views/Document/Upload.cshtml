@@ -1,0 +1,75 @@
+@model DocumentManagementSystem.ViewModels.DocumentUploadViewModel
+@{
+    ViewData["Title"] = "Doküman Yükle";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-upload me-2"></i>Doküman Yükle</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="Upload" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    <div class="upload-form-container">
+                        <div class="upload-help-text">
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Desteklenen formatlar: PDF, TXT, DOCX (Maksimum dosya boyutu: 50MB)
+                            </div>
+                        </div>
+
+                        <div class="upload-form-fields">
+                            <div class="upload-field-item">
+                                <label asp-for="Title" class="form-label">Doküman Başlığı</label>
+                                <input asp-for="Title" class="form-control form-control-lg" placeholder="Doküman başlığını girin" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+
+                            <div class="upload-field-item">
+                                <label asp-for="File" class="form-label">Dosya Seçin</label>
+                                <input asp-for="File" class="form-control" type="file" accept=".pdf,.txt,.docx" />
+                                <span asp-validation-for="File" class="text-danger"></span>
+                            </div>
+
+                            <div class="upload-field-item">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-upload me-1"></i>Dokümanı Yükle
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-lightbulb me-2"></i>Yükleme Sonrası İşlemler</h6>
+                    <ul class="mb-0">
+                        <li>Dosya içeriği otomatik olarak çıkarılacak</li>
+                        <li>Doküman özeti oluşturulacak</li>
+                        <li>Anahtar kelimeler belirlenecek</li>
+                        <li>Doğal dilde arama için indekslenecek</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Dosya seçildiğinde başlık alanını otomatik doldur
+        document.getElementById('File').addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const titleInput = document.getElementById('Title');
+                if (!titleInput.value) {
+                    // Dosya adından uzantıyı çıkar
+                    const fileName = file.name.replace(/\.[^/.]+$/, "");
+                    titleInput.value = fileName;
+                }
+            }
+        });
+    </script>
+}

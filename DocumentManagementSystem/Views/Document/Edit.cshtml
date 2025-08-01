@@ -1,0 +1,85 @@
+@model DocumentManagementSystem.ViewModels.DocumentViewModel
+@{
+    ViewData["Title"] = "Doküman Düzenle";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-edit me-2"></i>Doküman Düzenle</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">Doküman Başlığı</label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Dosya Adı</label>
+                            <input value="@Model.FileName" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Dosya Tipi</label>
+                            <input value="@Model.FileType.ToUpper()" class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Dosya Boyutu</label>
+                            <input value="@(Model.FileSize / 1024) KB" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Yükleyen</label>
+                            <input value="@Model.UploadedBy" class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Yükleme Tarihi</label>
+                            <input value="@Model.UploadDate.ToString("dd.MM.yyyy HH:mm")" class="form-control"
+                                readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">İşlem Durumu</label>
+                            <input value="@Model.ProcessingStatus" class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Summary))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Özet</label>
+                            <textarea class="form-control" rows="3" readonly>@Model.Summary</textarea>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Keywords))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Anahtar Kelimeler</label>
+                            <input value="@Model.Keywords" class="form-control" readonly />
+                        </div>
+                    }
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Geri Dön
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Değişiklikleri Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

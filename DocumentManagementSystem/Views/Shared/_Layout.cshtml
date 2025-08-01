@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Doküman Yönetim Sistemi</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <header class="modern-header">
+            <nav class="navbar navbar-expand-lg modern-navbar">
+                <div class="container-fluid">
+                    <!-- Sol taraf: Logo ve ana navigasyon menüleri -->
+                    <div class="navbar-left d-flex align-items-center">
+                        <!-- Logo/Brand -->
+                        <a class="navbar-brand modern-brand me-4" href="@Url.Action("Index", "Document")">
+                            <div class="brand-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="brand-text">
+                                <div class="brand-title">Doküman Yönetim</div>
+                                <div class="brand-subtitle">Sistemi</div>
+                            </div>
+                        </a>
+
+                        <!-- Ana navigasyon menüleri -->
+                        <ul class="navbar-nav main-nav">
+                            <li class="nav-item">
+                                <a class="nav-link modern-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" && ViewContext.RouteData.Values["Controller"]?.ToString() == "Document" ? "active" : "")"
+                                    href="@Url.Action("Index", "Document")">
+                                    <i class="fas fa-home nav-icon"></i>
+                                    <span class="nav-text">Ana Sayfa</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link modern-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Upload" ? "active" : "")"
+                                    href="@Url.Action("Upload", "Document")">
+                                    <i class="fas fa-upload nav-icon"></i>
+                                    <span class="nav-text">Doküman Yükle</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link modern-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Search" ? "active" : "")"
+                                    href="@Url.Action("Search", "Document")">
+                                    <i class="fas fa-search nav-icon"></i>
+                                    <span class="nav-text">Doküman Ara</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Sağ taraf: Kullanıcı menüsü -->
+                    <div class="navbar-right d-flex align-items-center">
+                        <div class="dropdown">
+                            <a class="nav-link modern-user-menu dropdown-toggle" href="#" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name">@User.Identity.Name</div>
+                                    <div class="user-role">Kullanıcı</div>
+                                </div>
+                                <i class="fas fa-chevron-down dropdown-arrow"></i>
+                            </a>
+                            <ul class="dropdown-menu modern-dropdown">
+                                <li>
+                                    <a class="dropdown-item modern-dropdown-item" href="#">
+                                        <i class="fas fa-user dropdown-icon"></i>
+                                        <span>Profil</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider modern-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item modern-dropdown-item logout-item"
+                                        href="@Url.Action("Logout", "Auth")">
+                                        <i class="fas fa-sign-out-alt dropdown-icon"></i>
+                                        <span>Çıkış Yap</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Mobil menü butonu -->
+                    <button class="navbar-toggler modern-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="toggler-icon"></span>
+                        <span class="toggler-icon"></span>
+                        <span class="toggler-icon"></span>
+                    </button>
+                </div>
+
+                <!-- Mobil menü -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link" href="@Url.Action("Index", "Document")">
+                                <i class="fas fa-home nav-icon"></i>
+                                <span class="nav-text">Ana Sayfa</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link" href="@Url.Action("Upload", "Document")">
+                                <i class="fas fa-upload nav-icon"></i>
+                                <span class="nav-text">Doküman Yükle</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link" href="@Url.Action("Search", "Document")">
+                                <i class="fas fa-search nav-icon"></i>
+                                <span class="nav-text">Doküman Ara</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+    }
+
+    <main role="main" class="container-fluid">
+        @RenderBody()
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

@@ -1,0 +1,200 @@
+@model DocumentManagementSystem.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Kayıt Ol";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Doküman Yönetim Sistemi</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1 class="auth-title">
+                    <i class="fas fa-file-alt me-3"></i>
+                    Doküman Yönetim Sistemi
+                </h1>
+                <p class="auth-subtitle">Yeni hesap oluşturun</p>
+            </div>
+
+            <div class="auth-form-container">
+                <form asp-action="Register" method="post" class="auth-form" id="registerForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="FirstName" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Ad
+                                </label>
+                                <input asp-for="FirstName" class="form-control auth-input"
+                                    placeholder="Adınızı giriniz" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="LastName" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Soyad
+                                </label>
+                                <input asp-for="LastName" class="form-control auth-input"
+                                    placeholder="Soyadınızı giriniz" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Username" class="form-label">
+                            <i class="fas fa-at me-2"></i>Kullanıcı Adı
+                        </label>
+                        <input asp-for="Username" class="form-control auth-input"
+                            placeholder="Kullanıcı adınızı giriniz" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                        <div class="form-text">3-50 karakter arasında olmalıdır</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Email" class="form-label">
+                            <i class="fas fa-envelope me-2"></i>E-posta
+                        </label>
+                        <input asp-for="Email" type="email" class="form-control auth-input"
+                            placeholder="E-posta adresinizi giriniz" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Şifre
+                                </label>
+                                <input asp-for="Password" type="password" class="form-control auth-input"
+                                    placeholder="Şifrenizi giriniz" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                                <div class="form-text">En az 6 karakter olmalıdır</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="ConfirmPassword" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Şifre Tekrarı
+                                </label>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control auth-input"
+                                    placeholder="Şifrenizi tekrar giriniz" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <button type="submit" class="btn btn-primary auth-btn">
+                        <i class="fas fa-user-plus me-2"></i>Hesap Oluştur
+                    </button>
+                </form>
+
+                <div class="auth-divider">
+                    <span>veya</span>
+                </div>
+
+                <div class="auth-footer">
+                    <p class="auth-text">Zaten hesabınız var mı?</p>
+                    <a asp-action="Login" class="btn btn-outline-primary auth-link-btn">
+                        <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+
+</html>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Real-time validation
+            $('#Username').on('input', function () {
+                var username = $(this).val();
+                if (username.length < 3) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.text-danger').text('Kullanıcı adı en az 3 karakter olmalıdır').show();
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).next('.text-danger').hide();
+                }
+            });
+
+            $('#Password').on('input', function () {
+                var password = $(this).val();
+                if (password.length < 6) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.text-danger').text('Şifre en az 6 karakter olmalıdır').show();
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).next('.text-danger').hide();
+                }
+            });
+
+            $('#ConfirmPassword').on('input', function () {
+                var password = $('#Password').val();
+                var confirmPassword = $(this).val();
+                if (password !== confirmPassword) {
+                    $(this).addClass('is-invalid');
+                    $(this).next('.text-danger').text('Şifreler eşleşmiyor').show();
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).next('.text-danger').hide();
+                }
+            });
+
+            // Form submission
+            $('#registerForm').on('submit', function () {
+                var isValid = true;
+
+                // Clear previous errors
+                $('.text-danger').hide();
+                $('.is-invalid').removeClass('is-invalid');
+
+                // Validate all required fields
+                $('input[required]').each(function () {
+                    if (!$(this).val().trim()) {
+                        $(this).addClass('is-invalid');
+                        $(this).next('.text-danger').show();
+                        isValid = false;
+                    }
+                });
+
+                // Validate password match
+                var password = $('#Password').val();
+                var confirmPassword = $('#ConfirmPassword').val();
+                if (password !== confirmPassword) {
+                    $('#ConfirmPassword').addClass('is-invalid');
+                    $('#ConfirmPassword').next('.text-danger').text('Şifreler eşleşmiyor').show();
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    return false;
+                }
+
+                // Show loading state
+                $('button[type="submit"]').prop('disabled', true).html('<span class="loading me-2"></span>Hesap oluşturuluyor...');
+            });
+        });
+    </script>
+}

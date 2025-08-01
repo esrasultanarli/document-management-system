@@ -1,0 +1,91 @@
+@model DocumentManagementSystem.ViewModels.DocumentSearchViewModel
+@{
+    ViewData["Title"] = "Doküman Arama";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-search me-2"></i>Doküman Arama</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="Search" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="search-form-container">
+                        <div class="search-help-text">
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Doğal dilde arama yapabilirsiniz. Örnek: "yapay zeka teknolojileri", "makine
+                                öğrenmesi", "veri analizi"
+                            </div>
+                        </div>
+
+                        <div class="search-form-fields">
+                            <div class="search-field-item">
+                                <label asp-for="SearchTerm" class="form-label">Arama Terimi</label>
+                                <input asp-for="SearchTerm" class="form-control form-control-lg"
+                                    placeholder="Aramak istediğiniz kelime veya cümleyi girin..." />
+                                <span asp-validation-for="SearchTerm" class="text-danger"></span>
+                            </div>
+
+                            <div class="search-field-item">
+                                <label asp-for="FileType" class="form-label">Dosya Tipi</label>
+                                <select asp-for="FileType" class="form-select">
+                                    <option value="">Tümü</option>
+                                    <option value="pdf">PDF</option>
+                                    <option value="docx">DOCX</option>
+                                    <option value="txt">TXT</option>
+                                </select>
+                            </div>
+
+                            <div class="search-field-item">
+                                <label asp-for="FromDate" class="form-label">Başlangıç Tarihi</label>
+                                <input asp-for="FromDate" type="date" class="form-control" />
+                            </div>
+
+                            <div class="search-field-item">
+                                <label asp-for="ToDate" class="form-label">Bitiş Tarihi</label>
+                                <input asp-for="ToDate" type="date" class="form-control" />
+                            </div>
+
+                            <div class="search-field-item">
+                                <label asp-for="UploadedBy" class="form-label">Yükleyen</label>
+                                <input asp-for="UploadedBy" class="form-control" placeholder="Kullanıcı adı" />
+                            </div>
+
+                            <div class="search-field-item">
+                                <button type="submit" class="btn btn-light btn-lg w-100">
+                                    <i class="fas fa-search me-1"></i>Ara
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-lightbulb me-2"></i>Arama Özellikleri</h6>
+                    <ul class="mb-0">
+                        <li><strong>Tam Metin Arama:</strong> Doküman içeriğinde, başlıkta ve özette arama yapar</li>
+                        <li><strong>Akıllı Eşleştirme:</strong> Benzer kelimeleri ve varyasyonları bulur</li>
+                        <li><strong>İlgi Skoru:</strong> Sonuçları ilgi derecesine göre sıralar</li>
+                        <li><strong>Vurgulama:</strong> Eşleşen terimleri vurgular</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Arama formunu otomatik gönder
+        document.getElementById('SearchTerm').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.form.submit();
+            }
+        });
+    </script>
+}

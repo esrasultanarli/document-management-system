@@ -1,0 +1,236 @@
+@model IEnumerable<DocumentManagementSystem.Models.Document>
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<div class="container-fluid">
+    <!-- Hero Banner Section -->
+    <div class="hero-banner-section">
+        <div class="hero-banner-container">
+            <div class="hero-box bg-gradient text-white shadow-custom">
+                <div class="hero-content d-flex justify-content-between align-items-center py-5 px-5">
+                    <div class="hero-text">
+                        <h1 class="display-4 mb-3">
+                            <i class="fas fa-file-alt me-3"></i>
+                            Doküman Yönetim Sistemi
+                        </h1>
+                        <p class="lead mb-0">Dokümanlarınızı yükleyin, arayın ve yönetin</p>
+                    </div>
+
+                    <!-- Action Buttons - Banner'ın içinde sağda -->
+                    <div class="hero-actions">
+                        <a asp-action="Search" class="btn btn-light btn-lg">
+                            <i class="fas fa-search me-2"></i>Arama
+                        </a>
+                        <a asp-action="Upload" class="btn btn-light btn-lg">
+                            <i class="fas fa-upload me-2"></i>Yeni Yükle
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Documents Section -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <h2 class="text-white">
+                <i class="fas fa-folder-open me-2"></i>Dokümanlar
+            </h2>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card text-center py-5 shadow-custom">
+                    <div class="card-body">
+                        <i class="fas fa-inbox fa-4x text-muted mb-4"></i>
+                        <h3 class="text-muted mb-3">Henüz Doküman Yok</h3>
+                        <p class="text-muted mb-4">İlk dokümanınızı yükleyerek başlayın</p>
+                        <a asp-action="Upload" class="btn btn-primary btn-lg">
+                            <i class="fas fa-upload me-2"></i>İlk Dokümanı Yükle
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="document-grid">
+            @foreach (var document in Model)
+            {
+                <div class="card h-100 shadow-custom d-flex flex-column" data-document-id="@document.Id">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-@(document.FileType == "pdf" ? "file-pdf" : document.FileType == "docx" ? "file-word" : "file-alt") fa-2x text-@(document.FileType == "pdf" ? "danger" : document.FileType == "docx" ? "primary" : "secondary")"
+                                style="margin-right: 15px;"></i>
+                            <span
+                                class="badge badge-@(document.FileType == "pdf" ? "danger" : document.FileType == "docx" ? "primary" : "secondary")"
+                                style="margin-right: 15px;">
+                                @document.FileType.ToUpper()
+                            </span>
+                            <span
+                                class="badge badge-@(document.ProcessingStatus == "Completed" ? "success" : document.ProcessingStatus == "Processing" ? "warning" : document.ProcessingStatus == "Failed" ? "danger" : "secondary") processing-status">
+                                <i
+                                    class="fas fa-@(document.ProcessingStatus == "Completed" ? "check" : document.ProcessingStatus == "Processing" ? "spinner processing-spinner" : document.ProcessingStatus == "Failed" ? "times" : "clock") me-1"></i>
+                                @(document.ProcessingStatus == "Completed" ? "Tamamlandı" :
+                                                        document.ProcessingStatus == "Processing" ? "İşleniyor" :
+                                                        document.ProcessingStatus == "Failed" ? "Başarısız" : "Bekliyor")
+                    </span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="small text-muted me-3">@(document.FileSize / 1024) KB</div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" asp-action="Details" asp-route-id="@document.Id">
+                                    <i class="fas fa-eye me-2"></i>Görüntüle
+                                </a></li>
+                            @if (document.UploadedBy == User.Identity.Name)
+                                    {
+                                        <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@document.Id">
+                                                <i class="fas fa-edit me-2"></i>Düzenle
+                                            </a></li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <span class="dropdown-item text-muted disabled">
+                                                <i class="fas fa-lock me-2"></i>Düzenleme Yetkisi Yok
+                                            </span>
+                                        </li>
+                                    }
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    @if (document.UploadedBy == User.Identity.Name)
+                                    {
+                                        <li>
+                                            <form asp-action="Delete" asp-route-id="@document.Id" method="post"
+                                                style="display: inline;">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="dropdown-item text-danger"
+                                                    onclick="return confirm('Bu dokümanı silmek istediğinizden emin misiniz?')">
+                                                    <i class="fas fa-trash me-2"></i>Sil
+                                                </button>
+                                            </form>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <span class="dropdown-item text-muted disabled">
+                                                <i class="fas fa-lock me-2"></i>Silme Yetkisi Yok
+                                            </span>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body flex-grow-1">
+                        <h5 class="card-title text-gradient">@document.Title</h5>
+                        <div class="mb-3">
+                            <div class="small text-muted">
+                                <i class="fas fa-user me-1"></i>@document.UploadedBy
+                            </div>
+                            <div class="small text-muted">
+                                <i class="fas fa-calendar me-1"></i>@document.UploadDate.ToString("dd.MM.yyyy HH:mm")
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(document.Summary))
+                        {
+                            <div class="card-text">@(document.Summary.Length > 120 ? document.Summary.Substring(0, 120) + "..." :
+                                                    document.Summary)</div>
+                                }
+
+                        @if (!string.IsNullOrEmpty(document.Keywords))
+                        {
+                            <div class="mb-3">
+                                <div class="keywords-container">
+                                    @foreach (var keyword in document.Keywords.Split(',').Take(4))
+                                    {
+                                        <span class="badge badge-primary">@keyword.Trim()</span>
+                                    }
+                                    @if (document.Keywords.Split(',').Length > 4)
+                                    {
+                                        <span class="badge badge-secondary">+@(document.Keywords.Split(',').Length - 4)</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-start align-items-center">
+                            <a asp-action="Details" asp-route-id="@document.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>Detaylar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Otomatik yenileme için JavaScript
+        document.addEventListener('DOMContentLoaded', function () {
+            let refreshInterval;
+
+            // İşleniyor durumundaki dokümanları kontrol et
+            function checkProcessingDocuments() {
+                const processingCards = document.querySelectorAll('.processing-status');
+                let hasProcessing = false;
+
+                processingCards.forEach(card => {
+                    const statusText = card.textContent.trim();
+                    if (statusText.includes('İşleniyor')) {
+                        hasProcessing = true;
+                    }
+                });
+
+                // Eğer işleniyor durumunda doküman varsa sayfayı yenile
+                if (hasProcessing) {
+                    if (!refreshInterval) {
+                        refreshInterval = setInterval(function () {
+                            location.reload();
+                        }, 3000); // 3 saniyede bir yenile
+                    }
+                } else {
+                    // İşleniyor durumunda doküman yoksa yenilemeyi durdur
+                    if (refreshInterval) {
+                        clearInterval(refreshInterval);
+                        refreshInterval = null;
+                    }
+                }
+            }
+
+            // İlk kontrol
+            checkProcessingDocuments();
+
+            // Her 5 saniyede bir kontrol et
+            setInterval(checkProcessingDocuments, 5000);
+
+            // Sayfa görünür olmadığında yenilemeyi durdur
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) {
+                    if (refreshInterval) {
+                        clearInterval(refreshInterval);
+                        refreshInterval = null;
+                    }
+                } else {
+                    checkProcessingDocuments();
+                }
+            });
+        });
+    </script>
+}

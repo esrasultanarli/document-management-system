@@ -1,0 +1,122 @@
+@model IEnumerable<DocumentManagementSystem.Models.SearchResult>
+@{
+    ViewData["Title"] = "Arama Sonuçları";
+}
+
+<div class="search-results-container">
+    <div class="search-results-header">
+        <div class="search-results-title">
+            <h2><i class="fas fa-search me-2"></i>Arama Sonuçları</h2>
+            @if (ViewBag.SearchTerm != null)
+            {
+                <p class="search-results-count">"@ViewBag.SearchTerm" için @Model.Count() sonuç bulundu</p>
+            }
+        </div>
+        <div class="search-results-actions">
+            <a asp-action="Search" class="btn btn-light">
+                <i class="fas fa-arrow-left me-1"></i>Yeni Arama
+            </a>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="search-no-results">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Arama kriterlerinize uygun doküman bulunamadı. Lütfen farklı anahtar kelimeler deneyin.
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="search-results-list">
+            @foreach (var result in Model)
+            {
+                <div class="search-result-item">
+                    <div class="search-result-card">
+                        <div class="search-result-header">
+                            <div class="search-result-badges">
+                                <span
+                                    class="badge file-type-badge @(result.FileType == "pdf" ? "pdf" : result.FileType == "docx" ? "docx" : "txt")">
+                                    <i
+                                        class="fas fa-@(result.FileType == "pdf" ? "file-pdf" : result.FileType == "docx" ? "file-word" : "file-alt") me-1"></i>
+                                    @result.FileType.ToUpper()
+                                </span>
+
+                            </div>
+                            <div class="search-result-actions">
+                                <a asp-action="Details" asp-route-id="@result.DocumentId"
+                                    class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i>Detaylar
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="search-result-content">
+                            <h5 class="search-result-title">
+                                <a asp-action="Details" asp-route-id="@result.DocumentId" class="text-decoration-none">
+                                    @result.Title
+                                </a>
+                            </h5>
+
+                            <div class="search-result-meta">
+                                <div class="search-result-info">
+                                    <div class="meta-item">
+                                        <i class="fas fa-user me-1"></i>@result.UploadedBy
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fas fa-calendar me-1"></i>@result.UploadDate.ToString("dd.MM.yyyy HH:mm")
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fas fa-file me-1"></i>@result.FileName
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(result.Summary))
+                            {
+                                <div class="search-result-summary">
+                                    <p>@result.Summary</p>
+                                </div>
+                            }
+
+                            @if (result.MatchedTerms.Any())
+                            {
+                                <div class="search-result-terms">
+                                    <span class="terms-label">Eşleşen terimler:</span>
+                                    @foreach (var term in result.MatchedTerms)
+                                    {
+                                        <span class="badge term-badge">@term</span>
+                                    }
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(result.Keywords))
+                            {
+                                <div class="search-result-keywords">
+                                    <span class="keywords-label">Anahtar kelimeler:</span>
+                                    @foreach (var keyword in result.Keywords.Split(',').Take(5))
+                                    {
+                                        <span class="badge keyword-badge">@keyword.Trim()</span>
+                                    }
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(result.HighlightedContent))
+                            {
+                                <div class="search-result-preview">
+                                    <span class="preview-label">İçerik önizlemesi:</span>
+                                    <div class="preview-content">
+                                        @Html.Raw(result.HighlightedContent.Length > 200 ? result.HighlightedContent.Substring(0,
+                                        200) +"..." : result.HighlightedContent)
+                        </div>
+                    </div>
+                                        }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

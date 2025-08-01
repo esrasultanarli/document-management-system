@@ -1,0 +1,144 @@
+@model DocumentManagementSystem.Models.Document
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3><i class="fas fa-file-alt me-2"></i>@Model.Title</h3>
+                <div>
+                    @if (Model.UploadedBy == User.Identity.Name)
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm me-3">
+                            <i class="fas fa-edit me-1"></i>Düzenle
+                        </a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-secondary btn-sm me-3" disabled>
+                            <i class="fas fa-lock me-1"></i>Düzenleme Yetkisi Yok
+                        </button>
+                    }
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-1"></i>Geri Dön
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Dosya Adı:</strong> @Model.FileName<br>
+                        <strong>Dosya Tipi:</strong>
+                        <span
+                            class="badge bg-@(Model.FileType == "pdf" ? "danger" : Model.FileType == "docx" ? "primary" : "secondary")">
+                            <i
+                                class="fas fa-@(Model.FileType == "pdf" ? "file-pdf" : Model.FileType == "docx" ? "file-word" : "file-alt") me-1"></i>
+                            @Model.FileType.ToUpper()
+                        </span><br>
+                        <strong>Dosya Boyutu:</strong> @(Model.FileSize / 1024) KB
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Yükleyen:</strong> @Model.UploadedBy<br>
+                        <strong>Yükleme Tarihi:</strong> @Model.UploadDate.ToString("dd.MM.yyyy HH:mm")<br>
+                        <strong>Son Güncelleme:</strong> @Model.LastModified.ToString("dd.MM.yyyy HH:mm")
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <strong>İşlem Durumu:</strong>
+                    <span
+                        class="badge bg-@(Model.ProcessingStatus == "Completed" ? "success" : Model.ProcessingStatus == "Processing" ? "warning" : Model.ProcessingStatus == "Failed" ? "danger" : "secondary")">
+                        <i
+                            class="fas fa-@(Model.ProcessingStatus == "Completed" ? "check" : Model.ProcessingStatus == "Processing" ? "spinner fa-spin" : Model.ProcessingStatus == "Failed" ? "times" : "clock") me-1"></i>
+                        @Model.ProcessingStatus
+                    </span>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Summary))
+                {
+                    <div class="mb-3">
+                        <h5><i class="fas fa-file-text me-2"></i>Özet</h5>
+                        <div class="alert alert-light">
+                            @Model.Summary
+                        </div>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Keywords))
+                {
+                    <div class="mb-3">
+                        <h5><i class="fas fa-tags me-2"></i>Anahtar Kelimeler</h5>
+                        <div class="keywords-container">
+                            @foreach (var keyword in Model.Keywords.Split(','))
+                            {
+                                <span class="badge bg-primary">@keyword.Trim()</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Content))
+                {
+                    <div class="mb-3">
+                        <h5><i class="fas fa-align-left me-2"></i>İçerik</h5>
+                        <div class="border rounded p-3 bg-light" style="max-height: 400px; overflow-y: auto;">
+                            <pre style="white-space: pre-wrap; font-family: inherit;">@Model.Content</pre>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-cogs me-2"></i>İşlemler</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.ProcessingStatus == "Failed")
+                {
+                    <form asp-action="Reprocess" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-warning btn-sm w-100 mb-2">
+                            <i class="fas fa-redo me-1"></i>Yeniden İşle
+                        </button>
+                    </form>
+                }
+
+                @if (Model.UploadedBy == User.Identity.Name)
+                {
+                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger btn-sm w-100"
+                            onclick="return confirm('Bu dokümanı silmek istediğinizden emin misiniz?')">
+                            <i class="fas fa-trash me-1"></i>Dokümanı Sil
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <i class="fas fa-lock me-1"></i>
+                        <strong>Silme Yetkisi Yok:</strong> Bu dokümanı sadece yükleyen kişi silebilir.
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle me-2"></i>Bilgiler</h5>
+            </div>
+            <div class="card-body">
+                <small class="text-muted">
+                    <strong>Doküman ID:</strong> @Model.Id<br>
+                    <strong>Dosya Yolu:</strong> @Model.FilePath<br>
+                    <strong>İşlenmiş:</strong> @(Model.IsProcessed ? "Evet" : "Hayır")
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
