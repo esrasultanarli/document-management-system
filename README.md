@@ -118,22 +118,6 @@ docker build -t document-management-system .
 docker run -p 8080:80 document-management-system
 ```
 
-## 🤝 Katkıda Bulunma
-
-1. Fork yapın
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. Pull Request oluşturun
-
-## 📄 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için `LICENSE` dosyasına bakın.
-
-## 📞 İletişim
-
-- Proje Linki: [https://github.com/esrasultanarli/document-management-system](https://github.com/esrasultanarli/document-management-system)
-
 ## 🙏 Teşekkürler
 
 - Google Gemini AI
