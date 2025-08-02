@@ -2,7 +2,7 @@
   "ConnectionStrings": {
     "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=DocumentManagementSystem;Trusted_Connection=true;MultipleActiveResultSets=true"
   },
-  "GeminiApiKey": "",
+  "GeminiApiKey": "YOUR_GEMINI_API_KEY_HERE",
   "Logging": {
     "LogLevel": {
       "Default": "Information",
@@ -10,4 +10,4 @@
     }
   },
   "AllowedHosts": "*"
-}
+} 

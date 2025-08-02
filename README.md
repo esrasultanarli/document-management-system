@@ -28,25 +28,30 @@ Bu proje, ASP.NET Core MVC kullanılarak geliştirilmiş kapsamlı bir belge yö
 ## 🔧 Kurulum
 
 1. **Repository'yi klonlayın**
+
    ```bash
    git clone https://github.com/esrasultanarli/document-management-system.git
    cd document-management-system
    ```
 
 2. **Bağımlılıkları yükleyin**
+
    ```bash
    cd DocumentManagementSystem
    dotnet restore
    ```
 
 3. **Veritabanını oluşturun**
+
    ```bash
    dotnet ef database update
    ```
 
 4. **API anahtarını yapılandırın**
-   - `appsettings.json` dosyasında `GeminiApiKey` değerini ayarlayın
+
+   - `appsettings.Development.json` dosyasını oluşturun ve `GeminiApiKey` değerini ayarlayın
    - Google Cloud Console'dan Gemini API anahtarı alın
+   - **ÖNEMLİ**: API anahtarınızı asla GitHub'a yüklemeyin!
 
 5. **Uygulamayı çalıştırın**
    ```bash
@@ -86,9 +91,44 @@ DocumentManagementSystem.Tests/
 - Kullanıcı bazlı yetkilendirme
 - Dosya yükleme güvenliği
 
+## 🔑 API Anahtarı Yapılandırması
+
+### Gemini API Anahtarı Kurulumu
+
+1. **Google Cloud Console'dan API Anahtarı Alın**
+
+   - [Google AI Studio](https://makersuite.google.com/app/apikey) adresine gidin
+   - Yeni bir API anahtarı oluşturun
+
+2. **Yerel Geliştirme İçin**
+
+   ```bash
+   # appsettings.Development.json dosyasını oluşturun
+   cp appsettings.Development.json.example appsettings.Development.json
+   ```
+
+   `appsettings.Development.json` dosyasında API anahtarınızı girin:
+
+   ```json
+   {
+     "GeminiApiKey": "YOUR_ACTUAL_API_KEY_HERE"
+   }
+   ```
+
+3. **Production Ortamı İçin**
+
+   - Environment variable kullanın: `GEMINI_API_KEY`
+   - Docker için: `docker-compose.yml` dosyasında environment variable tanımlayın
+
+4. **Güvenlik Notları**
+   - API anahtarınızı asla GitHub'a yüklemeyin
+   - `appsettings.Development.json` dosyası `.gitignore` ile korunmaktadır
+   - Production ortamında environment variable kullanın
+
 ## 🤖 AI Entegrasyonu
 
 Proje, Google Gemini AI kullanarak gelişmiş belge arama özelliği sunar:
+
 - Doğal dil ile belge arama
 - Belge içeriği analizi
 - Akıllı sonuç sıralama
@@ -122,4 +162,4 @@ docker run -p 8080:80 document-management-system
 
 - Google Gemini AI
 - ASP.NET Core ekibi
-- Bootstrap ve diğer açık kaynak projeler 
+- Bootstrap ve diğer açık kaynak projeler

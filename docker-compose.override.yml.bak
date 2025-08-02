@@ -1,0 +1,25 @@
+# Development override file
+# Bu dosya sadece development ortamında kullanılır
+# Production'da bu dosyayı kullanmayın
+
+version: "3.8"
+
+services:
+  webapp:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      # Source code mounting for hot reload (development only)
+      - ./DocumentManagementSystem:/app
+      - /app/bin
+      - /app/obj
+    ports:
+      - "5000:80" # Development port
+    command: dotnet watch run --urls http://0.0.0.0:80
+
+  sqlserver:
+    environment:
+      - MSSQL_AGENT_ENABLED=true
+    ports:
+      - "1433:1433" # Expose SQL Server port for external tools

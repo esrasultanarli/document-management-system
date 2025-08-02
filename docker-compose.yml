@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - app-network
+    # healthcheck:
+    #   test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1' || exit 1"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
+    #   start_period: 60s
+
+  # Web Application
+  webapp:
+    build:
+      context: ./DocumentManagementSystem
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+      - "8443:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=DocumentManagementSystem;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true
+      - GeminiApiKey=${GEMINI_API_KEY:-YOUR_GEMINI_API_KEY_HERE}
+    depends_on:
+      - sqlserver
+    volumes:
+      - uploads_data:/app/wwwroot/uploads
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  sqlserver_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

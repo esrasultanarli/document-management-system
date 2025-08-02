@@ -12,22 +12,22 @@ namespace DocumentManagementSystem.Services
         public GeminiService(ILogger<GeminiService> logger, IConfiguration configuration)
         {
             _logger = logger;
-            _apiKey = configuration["GeminiApiKey"] ?? "AIzaSyAafPbaf0hvPr9w0LsDrrKMJexa5Llf7b4";
+            _apiKey = configuration["GeminiApiKey"] ?? throw new InvalidOperationException("GeminiApiKey configuration is missing. Please set it in appsettings.json or environment variables.");
         }
 
-                public async Task<string> GenerateSummaryAsync(string content)
+        public async Task<string> GenerateSummaryAsync(string content)
         {
             try
             {
                 _logger.LogInformation("GenerateSummaryAsync başlatıldı. API Key: {ApiKey}", _apiKey.Substring(0, 10) + "...");
-                
+
                 if (string.IsNullOrWhiteSpace(content))
                     return "İçerik bulunamadı.";
 
                 // Akıllı özet algoritması - metadata kısmını atlar
                 var cleanContent = RemoveMetadataSection(content);
                 var sentences = ExtractSentences(cleanContent);
-                
+
                 if (sentences.Count == 0)
                 {
                     _logger.LogWarning("Temizlenmiş içerikte cümle bulunamadı, orijinal içerik kullanılıyor");
@@ -36,7 +36,7 @@ namespace DocumentManagementSystem.Services
 
                 // Cümleleri skorla
                 var scoredSentences = ScoreSentences(sentences);
-                
+
                 // En yüksek skorlu cümleleri seç (3-5 cümle)
                 var topSentences = scoredSentences
                     .OrderByDescending(s => s.Score)
@@ -86,7 +86,7 @@ namespace DocumentManagementSystem.Services
                     continue;
 
                 // Metadata kontrolü
-                var isMetadata = metadataKeywords.Any(keyword => 
+                var isMetadata = metadataKeywords.Any(keyword =>
                     trimmedLine.ToLowerInvariant().Contains(keyword.ToLowerInvariant()));
 
                 // Eğer metadata bulunduysa ve henüz içerik başlamadıysa, bu satırı atla
@@ -145,8 +145,8 @@ namespace DocumentManagementSystem.Services
         private List<SentenceScore> ScoreSentences(List<string> sentences)
         {
             var scoredSentences = new List<SentenceScore>();
-            var allWords = sentences.SelectMany(s => 
-                s.Split(new[] { ' ', '\t', '\n', '\r', '.', ',', '!', '?', ':', ';', '(', ')', '[', ']', '"', '"' }, 
+            var allWords = sentences.SelectMany(s =>
+                s.Split(new[] { ' ', '\t', '\n', '\r', '.', ',', '!', '?', ':', ';', '(', ')', '[', ']', '"', '"' },
                 StringSplitOptions.RemoveEmptyEntries)
                 .Where(w => w.Length > 2)
                 .Select(w => w.ToLowerInvariant()))
@@ -169,7 +169,7 @@ namespace DocumentManagementSystem.Services
             for (int i = 0; i < sentences.Count; i++)
             {
                 var sentence = sentences[i];
-                var words = sentence.Split(new[] { ' ', '\t', '\n', '\r', '.', ',', '!', '?', ':', ';', '(', ')', '[', ']', '"', '"' }, 
+                var words = sentence.Split(new[] { ' ', '\t', '\n', '\r', '.', ',', '!', '?', ':', ';', '(', ')', '[', ']', '"', '"' },
                     StringSplitOptions.RemoveEmptyEntries)
                     .Where(w => w.Length > 2)
                     .Select(w => w.ToLowerInvariant())
@@ -199,9 +199,9 @@ namespace DocumentManagementSystem.Services
                     score *= 1.1;
 
                 // Özel kelime bonusu
-                var importantWords = new[] { "sonuç", "bulgu", "araştırma", "çalışma", "yöntem", "veri", "analiz", 
+                var importantWords = new[] { "sonuç", "bulgu", "araştırma", "çalışma", "yöntem", "veri", "analiz",
                     "result", "finding", "research", "study", "method", "data", "analysis", "conclusion", "summary" };
-                
+
                 foreach (var importantWord in importantWords)
                 {
                     if (sentence.ToLowerInvariant().Contains(importantWord))
